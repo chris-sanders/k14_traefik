@@ -1,4 +1,5 @@
 ---
-k14_app: traefik
-k14_helm_repo: https://github.com/containous/traefik-helm-chart
-k14_helm_path: traefik/
+k14:
+  app: traefik
+  helm_repo: https://github.com/containous/traefik-helm-chart
+  helm_path: traefik/
