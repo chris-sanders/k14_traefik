@@ -5,3 +5,10 @@
 metadata:
     #@overlay/remove
     annotations: null
+
+#@ is_ir = overlay.subset({"kind": "IngressRoute"})
+#@ is_dashboard = overlay.subset({"metadata": {"name" : "traefik-dashboard" }})
+
+#@overlay/match by=overlay.and_op(is_ir, is_dashboard),expects="0+"
+#@overlay/remove
+---
