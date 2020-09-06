@@ -5,10 +5,23 @@
 metadata:
     #@overlay/remove
     annotations: null
+# Don't enforce TLS with backend services
+spec:
+    template:
+        spec:
+            containers:
+                #@overlay/match by="name"
+                - name: traefik
+                  args:
+                  #@overlay/append
+                  - --serversTransport.insecureSkipVerify=true
 
+# Remove default dashboard route in favor of our custom one
 #@ is_ir = overlay.subset({"kind": "IngressRoute"})
 #@ is_dashboard = overlay.subset({"metadata": {"name" : "traefik-dashboard" }})
 
 #@overlay/match by=overlay.and_op(is_ir, is_dashboard),expects="0+"
 #@overlay/remove
 ---
+
+

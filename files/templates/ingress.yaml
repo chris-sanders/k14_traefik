@@ -69,4 +69,69 @@ spec:
         namespace: #@ app.namespace
 #@ end
 #@ end
+#@ if hasattr(data.values.traefik, "default_route"):
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-default-tls-route
+  namespace: #@ data.values.traefik.namespace
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostRegexp(`{catchall:.*}`)
+      kind: Rule
+      priority: 1
+      services:
+      - name: service-default-route
+        port: 443
+  tls: {}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-default-route
+  namespace: #@ data.values.traefik.namespace
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: HostRegexp(`{catchall:.*}`)
+      kind: Rule
+      priority: 1
+      services:
+      - name: service-default-route
+        port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-default-route
+  namespace: #@ data.values.traefik.namespace
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      name: https
+      port: 443
+      targetPort: 443
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: service-default-route
+  namespace: #@ data.values.traefik.namespace
+subsets:
+  - addresses:
+      - ip: #@ data.values.traefik.default_route.address
+    ports:
+      - port: 80
+        name: http
+      - port: 443
+        name: https
+#@ end
 
