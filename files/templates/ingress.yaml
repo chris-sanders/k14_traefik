@@ -44,6 +44,12 @@ spec:
   routes:
     - match: #@ "Host(`{}`)".format(app.uri)
       kind: Rule
+      #@ if hasattr(app, "require_local"):
+      #@ if app.require_local:
+      middlewares:
+      - name: local-ipwhitelist
+      #@ end
+      #@ end
       services:
       - name: #@ app.service_name
         port: #@ app.service_port
@@ -51,6 +57,17 @@ spec:
   tls: {}
 #@ end
 #@ end
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: local-ipwhitelist
+spec:
+  ipWhiteList:
+    sourceRange:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16
 #@ if hasattr(data.values.traefik, "ingress_routes_udp"):
 #@ for app in data.values.traefik.ingress_routes_udp:
 ---
