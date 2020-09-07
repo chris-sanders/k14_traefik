@@ -18,7 +18,12 @@ spec:
       services:
       - name: api@internal
         kind: TraefikService
+  #@ if data.values.traefik.custom_cert:
+  tls: 
+    secretName: traefik-cert
+  #@ else:
   tls: {}
+  #@ end
 #@ if data.values.traefik.dashboard.users:
 ---
 apiVersion: traefik.containo.us/v1alpha1
@@ -32,6 +37,9 @@ spec:
 #@ end
 #@ if hasattr(data.values.traefik, "ingress_routes"):
 #@ for app in data.values.traefik.ingress_routes:
+#@ if not hasattr(app, "insecure"):
+#@   app.insecure = False
+#@ end
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -40,7 +48,11 @@ metadata:
   namespace: #@ app.namespace
 spec:
   entryPoints:
+    #@ if app.insecure:
+    - web
+    #@ else:
     - websecure
+    #@ end
   routes:
     - match: #@ "Host(`{}`)".format(app.uri)
       kind: Rule
@@ -54,7 +66,14 @@ spec:
       - name: #@ app.service_name
         port: #@ app.service_port
         namespace: #@ app.namespace
+  #@ if not app.insecure:
+  #@ if data.values.traefik.custom_cert:
+  tls:
+      secretName: traefik-cert
+  #@ else:
   tls: {}
+  #@ end
+  #@ end
 #@ end
 #@ end
 ---
@@ -103,7 +122,12 @@ spec:
       services:
       - name: service-default-route
         port: 443
+  #@ if data.values.traefik.custom_cert:
+  tls:
+      secretName: traefik-cert
+  #@ else:
   tls: {}
+  #@ end
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute

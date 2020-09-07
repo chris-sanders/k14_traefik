@@ -7,3 +7,4 @@ traefik:
     dashboard:
         hostname: dashboard.traefik
         users:
+    custom_cert: false
