@@ -7,4 +7,22 @@ ports:
         port: 5300 
         expose: true
         protocol: UDP
+service:
+  #enabled: true
+  #type: LoadBalancer
+  # Additional annotations (e.g. for cloud provider specific config)
+  #annotations: {}
+  # Additional entries here will be added to the service spec. Cannot contains
+  # type, selector or ports entries.
+  #spec: {}
+  spec:
+    externalTrafficPolicy: Local
+    # loadBalancerIP: "1.2.3.4"
+    # clusterIP: "2.3.4.5"
+    #loadBalancerSourceRanges: []
+    # - 192.168.0.1/32
+    # - 172.16.0.0/16
+    #externalIPs: []
+    # - 1.2.3.4
+
 
