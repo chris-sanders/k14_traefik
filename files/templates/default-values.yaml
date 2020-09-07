@@ -8,3 +8,4 @@ traefik:
         hostname: dashboard.traefik
         users:
     custom_cert: false
+    production_cert: false
