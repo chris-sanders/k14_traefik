@@ -37,9 +37,6 @@ spec:
 #@ end
 #@ if hasattr(data.values.traefik, "ingress_routes"):
 #@ for app in data.values.traefik.ingress_routes:
-#@ if not hasattr(app, "insecure"):
-#@   app.insecure = False
-#@ end
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
